@@ -1,47 +1,47 @@
 document.addEventListener("DOMContentLoaded", function () {
-    setupMoteTracker();
-    fetchRewards();
-    addSummaryText();
-    setupToggleSections();
-    updateArcaneSelection();
+    setupCousinsTracker();
+    fetchCousinsRewards();
+    addCousinsSummaryText();
+    setupCousinsToggleSections();
+    updateCousinsSelection();
 });
 
-// Setup the Mote Tracker
-function setupMoteTracker() {
-    const bellyDiv = document.getElementById("belly-tracker");
+// Setup the Cousins Tracker
+function setupCousinsTracker() {
+    const cousinsDiv = document.getElementById("cousins-saved-rows");
 
-    bellyDiv.innerHTML = `
-        <div class="goal-bar" style="justify-content: center; margin-bottom: 20px;">
+    cousinsDiv.innerHTML = `
+        <div class="goal-bar" style="justify-content: center; margin-bottom: 20px; background-color: #00FF00;">
             <div class="goal-section">
-                <label for="motesGoal">Goal:</label>
-                <input type="number" id="motesGoal" value="" min="0" class="number-box" style="text-align:center;">
+                <label for="cousinsGoal">Goal:</label>
+                <input type="number" id="cousinsGoal" value="" min="0" class="number-box" style="text-align:center;">
             </div>
             <div class="goal-section" style="margin-left: 20px;">
-                <label for="motesOwned">Owned:</label>
+                <label for="cousinsOwned">Owned:</label>
                 <div class="change-controls">
-                    <button class="mote-btn jade-btn rounded-btn" onclick="changeMotes(-1)">-</button>
-                    <input type="number" id="motesOwned" value="0" min="0" class="number-box" style="text-align:center;">
-                    <button class="mote-btn jade-btn rounded-btn" onclick="changeMotes(1)">+</button>
+                    <button class="mote-btn jade-btn rounded-btn" onclick="changeCousins(-1)">-</button>
+                    <input type="number" id="cousinsOwned" value="0" min="0" class="number-box" style="text-align:center;">
+                    <button class="mote-btn jade-btn rounded-btn" onclick="changeCousins(1)">+</button>
                 </div>
             </div>
         </div>
-        <div id="summarySection" class="toggle-section">
-            <h2 class="toggle-title" data-target="summaryText">Summary</h2>
-            <div id="summaryText" class="summary-box" style="display: none;"></div>
+        <div id="cousinsSummarySection" class="toggle-section">
+            <h2 class="toggle-title" data-target="cousinsSummaryText">Summary</h2>
+            <div id="cousinsSummaryText" class="summary-box" style="display: none;"></div>
         </div>
         <h2 class="toggle-title">Community Rewards</h2>
-        <div id="communityRewardsGrid" class="rewards-grid" style="background: none;"></div>
-        <div id="eventRewardsGrid" class="rewards-grid"></div>
+        <div id="cousinsCommunityRewardsGrid" class="rewards-grid" style="background: none;"></div>
+        <div id="cousinsEventRewardsGrid" class="rewards-grid"></div>
         <h2>Clan Rewards</h2>
-        <div id="clanRewardsGrid" class="rewards-grid"></div>
+        <div id="cousinsClanRewardsGrid" class="rewards-grid"></div>
     `;
 
-    document.getElementById("motesGoal").addEventListener("input", updateMotes);
-    document.getElementById("motesOwned").addEventListener("input", updateMotes);
+    document.getElementById("cousinsGoal").addEventListener("input", updateCousins);
+    document.getElementById("cousinsOwned").addEventListener("input", updateCousins);
 }
 
-// Function to Render Rewards
-function renderRewards(rewards, containerId) {
+// Function to Render Cousins Rewards
+function renderCousinsRewards(rewards, containerId) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
 
@@ -75,7 +75,7 @@ function renderRewards(rewards, containerId) {
                     if (quantityInput.value !== "") {
                         const quantity = parseInt(quantityInput.value) || 0;
                         rewardDiv.querySelector(".reward-limit").textContent = `Limit: ${reward.limit - quantity}`;
-                        updateMotes();
+                        updateCousins();
                     }
                 });
             });
@@ -83,36 +83,36 @@ function renderRewards(rewards, containerId) {
 
         rewardDiv.addEventListener("click", function () {
             rewardDiv.classList.toggle("selected");
-            updateMotes();
+            updateCousins();
         });
 
         container.appendChild(rewardDiv);
 
         // Limit the number of displayed rewards for community rewards
-        if (containerId === "communityRewardsGrid" && index >= 2) {
+        if (containerId === "cousinsCommunityRewardsGrid" && index >= 2) {
             return;
         }
     });
 
     // Ensure community rewards are displayed in a row
-    if (containerId === "communityRewardsGrid") {
+    if (containerId === "cousinsCommunityRewardsGrid") {
         container.style.display = "flex";
         container.style.flexWrap = "wrap";
     }
 }
 
-// Change Owned Motes Count
-function changeMotes(direction) {
-    const owned = document.getElementById("motesOwned");
+// Change Owned Cousins Count
+function changeCousins(direction) {
+    const owned = document.getElementById("cousinsOwned");
     const inputAmount = parseInt(owned.value) || 1;
     let newOwned = parseInt(owned.value) + (direction * inputAmount);
 
     owned.value = Math.max(newOwned, 0);
-    updateMotes();
+    updateCousins();
 }
 
-// Update Needed Motes
-function updateMotes() {
+// Update Needed Cousins
+function updateCousins() {
     let totalMotes = 0;
     document.querySelectorAll(".selected").forEach(reward => {
         const cost = parseInt(reward.querySelector(".reward-cost").textContent.replace("Cost: ", "")) || 0;
@@ -120,14 +120,14 @@ function updateMotes() {
         totalMotes += cost * quantity;
     });
 
-    const owned = parseInt(document.getElementById("motesOwned").value) || 0;
+    const owned = parseInt(document.getElementById("cousinsOwned").value) || 0;
     const goal = totalMotes - owned;
 
-    document.getElementById("motesGoal").value = goal;
+    document.getElementById("cousinsGoal").value = goal;
 }
 
 // Toggle Sections
-function toggleSection(sectionId) {
+function toggleCousinsSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
         section.classList.toggle('hidden');
@@ -135,7 +135,7 @@ function toggleSection(sectionId) {
 }
 
 // Event Rewards Table (FULLY COMPLETE)
-const eventRewards = [
+const cousinsEventRewards = [
     { name: "Low Guardian Chest Plate", cost: 15, img: "LowGuardianChestPlate.png" },
     { name: "Belly Of The Beast Sigil", cost: 10, img: "BellyOfTheBeastEmblem.png" },
     { name: "Krios Signa", cost: 10, img: "KriosSigna.png" },
@@ -175,7 +175,7 @@ const eventRewards = [
 ];
 
 // Clan Rewards Table (FULLY COMPLETE)
-const clanRewards = [
+const cousinsClanRewards = [
     { name: "Enlightened Hate Skin", cost: 100, img: "EnlightenedHateSkin.png" },
     { name: "Gilded Clan Sigil", cost: 15, img: "ClanSigilGilded.png" },
     { name: "Glyphed Clan Sigil", cost: 15, img: "ClanSigilGlyphed.png" },
@@ -187,98 +187,13 @@ const clanRewards = [
 ];
 
 // Community Rewards Table
-const communityRewards = [
+const cousinsCommunityRewards = [
     { name: "Aspirus Ephemera", cost: 40, img: "AspirusEphemera.png" },
     { name: "Aspirus Emergent Ephemera", cost: 40, img: "AspirusEmergentEphemera.png" },
     { name: "Aspirus Apex Ephemera", cost: 40, img: "AspirusApexEphemera.png" }
 ];
 
-// Initialize Rewards
-function fetchRewards() {
-    renderRewards(communityRewards, "communityRewardsGrid");
-    renderRewards(eventRewards, "eventRewardsGrid");
-    renderRewards(clanRewards, "clanRewardsGrid");
-}
-
-// Summary Information
-function addSummaryText() {
-    document.getElementById("summaryText").innerHTML = `
-        <p>To buy all non-Arcane items at least once, players will need 290 Volatile Motes.</p>
-        <p>To buy all Arcanes available through the event to max rank once, players will need 1,659 Volatile Motes.</p>
-        <p>To buy all Arcanes available to max rank twice, players will need 3,318 Volatile Motes.</p>
-        <p>Total needed from all shops: 11,550 Volatile Motes.</p>
-    `;
-}
-
-// Ensure event listeners are applied when the DOM loads
-function setupToggleSections() {
-    let sections = document.querySelectorAll(".toggle-title");
-    sections.forEach(section => {
-        section.addEventListener("click", function () {
-            let targetId = this.getAttribute("data-target");
-            toggleSection(targetId);
-        });
-    });
-}
-
-// Ensure that selected Arcanes do not exceed their limit
-function updateArcaneSelection() {
-    document.querySelectorAll(".reward-item").forEach(reward => {
-        let quantityInput = reward.querySelector(".reward-quantity");
-        if (quantityInput) {
-            quantityInput.addEventListener("input", function () {
-                let maxLimit = parseInt(quantityInput.max) || 0;
-                let selectedAmount = parseInt(quantityInput.value) || 0;
-
-                if (selectedAmount > maxLimit) {
-                    quantityInput.value = maxLimit;
-                } else if (selectedAmount < 0) {
-                    quantityInput.value = 0;
-                }
-
-                updateMotes();
-            });
-        }
-    });
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    const rewards = {
-        "Arcane Energize": 42,
-        "Arcane Grace": 42,
-        // ...other rewards...
-    };
-
-    const rewardSelect = document.getElementById("reward-select");
-    const rewardInput = document.getElementById("reward-input");
-    const goalBox = document.getElementById("goal-box");
-
-    rewardSelect.addEventListener("change", function () {
-        const selectedReward = rewardSelect.value;
-        if (rewards[selectedReward]) {
-            rewardInput.max = rewards[selectedReward];
-            rewardInput.style.display = "block";
-            rewardInput.value = goalBox.textContent || "";
-        } else {
-            rewardInput.style.display = "none";
-            goalBox.textContent = "";
-        }
-    });
-
-    rewardInput.addEventListener("input", function () {
-        const selectedReward = rewardSelect.value;
-        if (rewards[selectedReward]) {
-            goalBox.textContent = rewardInput.value;
-        }
-    });
-
-    rewardSelect.addEventListener("blur", function () {
-        if (!rewardSelect.value) {
-            rewardInput.style.display = "none";
-            goalBox.textContent = "";
-        }
-    });
-
-    // Initialize with the first reward
-    rewardSelect.dispatchEvent(new Event("change"));
-});
+// Initialize Cousins Rewards
+function fetchCousinsRewards() {
+    renderCousinsRewards(cousinsCommunityRewards, "cousinsCommunityRewardsGrid");
+    renderCousinsRewards(cousinsEventRewards

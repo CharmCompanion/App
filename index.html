@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operation: Belly of the Beast</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/css/pluginsCss.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/css/plugins.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/css/luckysheet.css">
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/js/plugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet/dist/luckysheet.umd.js"></script>
 </head>
 <body onload="initApp()">
 
     <!-- Navigation Tabs -->
     <div id="tabs">
         <button onclick="switchTab('nightwave')">Nightwave</button>
-        <button onclick="switchTab('lich')">Lich Hunts</button>
+        <button onclick="switchTab('hunts')">Hunts</button> <!-- Renamed from Lich Hunts -->
         <button onclick="switchTab('belly')">Belly of the Beast</button>
         <button onclick="switchTab('circuit')">Circuit Tracker</button>
         <button onclick="switchTab('sheets')">Sheets</button>
@@ -23,28 +28,39 @@
     <div class="container">
         <div id="content">
             <div id="nightwave" class="tab"></div>
-            <div id="lich" class="tab">
-                <h2 id="lich-title" class="lich-title" onclick="switchLich()">Brothers</h2>
-                <div id="lich-saved-rows" class="lich-saved-rows"></div>
+            <div id="hunts" class="tab">
+                <h2 id="hunts-title" class="hunts-title" onclick="switchHunts()">Hunts</h2>
+                <div id="hunts-saved-rows" class="hunts-saved-rows"></div>
+                <h2 id="cousins-title" class="cousins-title" onclick="switchCousins()">Cousins</h2>
+                <div id="cousins-saved-rows" class="cousins-saved-rows"></div>
             </div>
 
             <!-- Belly of the Beast Tab -->
             <div id="belly" class="tab active">
                 <h1 class="belly-title">Operation: Belly of the Beast</h1>
-                <div id="belly-tracker"></div>
+                <div id="belly-tracker">
+                    <select id="reward-select">
+                        <option value="">Select Reward</option>
+                        <option value="Arcane Energize">Arcane Energize</option>
+                        <option value="Arcane Grace">Arcane Grace</option>
+                        <!-- ...other rewards... -->
+                    </select>
+                    <input type="number" id="reward-input" style="display: none;" />
+                    <div id="goal-box"></div>
+                </div>
             </div>
 
             <div id="circuit" class="tab"></div>
             <div id="sheets" class="tab">
                 <h2 class="sheets-title">Sheets</h2>
                 <button id="toggle-view-sheets" class="toggle-btn" onclick="toggleView()">N</button>
-                <div id="sheets-container" class="sheets-container">
+                <div id="toolbar">
                     <input type="text" id="sheets-name-input" placeholder="Enter sheet name">
-                    <button id="sheet-save-button">Save</button>
-                    <button id="sheet-delete-button">Delete</button>
+                    <button id="sheet-save-button">Save Sheet</button>
+                    <button id="sheet-delete-button">Delete Sheet</button>
                     <select id="sheets-dropdown"></select>
-                    <div id="spreadsheet"></div>
                 </div>
+                <div id="sheets-container" class="sheets-container" style="margin-top: 20px;"></div>
             </div>
             <div id="notes" class="tab">
                 <h2 class="notes-title">Notes</h2>
@@ -64,10 +80,10 @@
     <!-- Load Scripts -->
     <script src="js/app.js"></script>
     <script src="js/nightwave.js"></script>
-    <script src="js/lich_hunts.js"></script>
+    <script src="js/hunts.js"></script> <!-- Renamed from lich_hunts.js -->
     <script src="js/bob.js"></script>
     <script src="js/circuit.js"></script>
-    <script src="js/sheets.js"></script>
+    <script src="js/sheets.js" defer></script>
     <script src="js/notes.js"></script>
     <script src="js/settings.js"></script>
 </body>

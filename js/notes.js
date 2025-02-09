@@ -6,28 +6,33 @@ let currentNote = localStorage.getItem("currentNote") || "New Note"; // Default 
 function initNotes() {
     console.log("Initializing Notes Tab");
 
-    // Refresh the dropdown with saved notes
-    refreshNotesDropdown();
+    const saveButton = document.getElementById("save-button");
+    const deleteButton = document.getElementById("delete-button");
+    const notesDropdown = document.getElementById("notes-dropdown");
+    const notesEditor = document.getElementById("notes-editor");
 
-    // Ensure the text entry box is blank when "New Note" is selected
-    if (currentNote === "New Note") {
-        setEditorContent(""); // Explicitly clear the editor for "New Note"
+    if (saveButton && deleteButton && notesDropdown && notesEditor) {
+        saveButton.addEventListener("click", saveNote, { passive: true });
+        deleteButton.addEventListener("click", deleteNote, { passive: true });
+        notesDropdown.addEventListener("change", switchNote, { passive: true });
+
+        // Refresh the dropdown with saved notes
+        refreshNotesDropdown();
+
+        // Ensure the text entry box is blank when "New Note" is selected
+        if (currentNote === "New Note") {
+            setEditorContent(""); // Explicitly clear the editor for "New Note"
+        } else {
+            setEditorContent(notes[currentNote] || ""); // Load content for saved notes
+        }
+
+        // Clear the name input field
+        document.getElementById("notes-name-input").value = "";
+
+        console.log(`Notes Tab initialized with currentNote: "${currentNote}"`);
     } else {
-        setEditorContent(notes[currentNote] || ""); // Load content for saved notes
+        console.error("Notes tab elements not found");
     }
-
-    // Attach button handlers
-    document.getElementById("save-button").onclick = saveNote;
-    document.getElementById("delete-button").onclick = deleteNote;
-    document.getElementById("toggle-view").onclick = toggleView;
-
-    // Attach dropdown handler
-    document.getElementById("notes-dropdown").onchange = switchNote;
-
-    // Clear the name input field
-    document.getElementById("notes-name-input").value = "";
-
-    console.log(`Notes Tab initialized with currentNote: "${currentNote}"`);
 }
 
 // Save a new or edited note
