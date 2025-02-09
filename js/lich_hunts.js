@@ -255,10 +255,10 @@ function suggestLoadout() {
   const suggestions = [];
   if (filledMods.length === 3 || activeMods.filter(Boolean).length === 3) {
     // If all 3 mods are filled, use them directly for suggestions
-    suggestions.push([activeMods[0], activeMods[1], "Oull"]);
-    suggestions.push(["Oull", activeMods[0], activeMods[1]]);
-    suggestions.push(["Oull", activeMods[1], activeMods[0]]);
-    suggestions.push([activeMods[1], "Oull", activeMods[0]]);
+    suggestions.push([activeMods[0], activeMods[1], activeMods[2]]);
+    suggestions.push([activeMods[2], activeMods[0], activeMods[1]]);
+    suggestions.push([activeMods[1], activeMods[2], activeMods[0]]);
+    suggestions.push([activeMods[2], activeMods[1], activeMods[0]]);
   }
 
   // Assign the suggestions to rows 1-4
@@ -266,11 +266,6 @@ function suggestLoadout() {
   mods[currentPage][2] = suggestions[1];
   mods[currentPage][3] = suggestions[2];
   mods[currentPage][4] = suggestions[3];
-
-  // Swap rows 3 and 4 if a third mod is used
-  if (activeMods[2] !== "Oull") {
-    [mods[currentPage][3], mods[currentPage][4]] = [mods[currentPage][4], mods[currentPage][3]];
-  }
 
   localStorage.setItem("mod_selections", JSON.stringify(mods));
   renderLichSavedRows();
