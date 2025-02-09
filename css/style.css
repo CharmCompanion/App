@@ -300,7 +300,6 @@ body {
     display: block;
 }
 
-
 /* Centering Goal/Owned Bar */
 .goal-bar {
     display: flex;
@@ -479,5 +478,11 @@ body {
     align-items: center;
     width: 80%;
     margin: 20px auto;
+}
+
+/* Slime Green Theme for Cousins */
+.cousins-title {
+    background-color: #32CD32; /* Slime green */
+    color: white;
 }
 

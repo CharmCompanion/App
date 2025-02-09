@@ -1,417 +1,297 @@
-document.addEventListener("DOMContentLoaded", function () {
-    setupHuntsTracker();
-    fetchHuntsRewards();
-    addHuntsSummaryText();
-    setupHuntsToggleSections();
-    updateHuntsSelection();
-    setupCousinsTracker();
-    fetchCousinsRewards();
-    addCousinsSummaryText();
-    setupCousinsToggleSections();
-    updateCousinsSelection();
-});
+// Enhanced Lich Hunts Script
 
-// Setup the Hunts Tracker
-function setupHuntsTracker() {
-    const huntsDiv = document.getElementById("hunts-saved-rows");
+let mods = JSON.parse(localStorage.getItem("mod_selections")) || {
+    Sisters: [[null, null, null], [null, null, null], [null, null, null], [null, null, null], [null, null, null]],
+    Brothers: [[null, null, null], [null, null, null], [null, null, null], [null, null, null], [null, null, null]],
+    Cousins: [[null, null, null], [null, null, null], [null, null, null], [null, null, null], [null, null, null]],
+};
+let currentPage = localStorage.getItem("lichType") || "Brothers";
+const themes = { Sisters: "blue", Brothers: "red", Cousins: "#32CD32" };
 
-    huntsDiv.innerHTML = `
-        <div class="goal-bar" style="justify-content: center; margin-bottom: 20px;">
-            <div class="goal-section">
-                <label for="huntsGoal">Goal:</label>
-                <input type="number" id="huntsGoal" value="" min="0" class="number-box" style="text-align:center;">
-            </div>
-            <div class="goal-section" style="margin-left: 20px;">
-                <label for="huntsOwned">Owned:</label>
-                <div class="change-controls">
-                    <button class="mote-btn jade-btn rounded-btn" onclick="changeHunts(-1)">-</button>
-                    <input type="number" id="huntsOwned" value="0" min="0" class="number-box" style="text-align:center;">
-                    <button class="mote-btn jade-btn rounded-btn" onclick="changeHunts(1)">+</button>
-                </div>
-            </div>
-        </div>
-        <div id="huntsSummarySection" class="toggle-section">
-            <h2 class="toggle-title" data-target="huntsSummaryText">Summary</h2>
-            <div id="huntsSummaryText" class="summary-box" style="display: none;"></div>
-        </div>
-        <h2 class="toggle-title">Community Rewards</h2>
-        <div id="huntsCommunityRewardsGrid" class="rewards-grid" style="background: none;"></div>
-        <div id="huntsEventRewardsGrid" class="rewards-grid"></div>
-        <h2>Clan Rewards</h2>
-        <div id="huntsClanRewardsGrid" class="rewards-grid"></div>
-    `;
+function initLichHunts() {
+    const lichTitle = document.getElementById("lich-title");
+    if (!lichTitle) {
+        console.error("Lich title element not found. Please ensure the 'lich-title' element exists in the HTML.");
+        return;
+    }
 
-    document.getElementById("huntsGoal").addEventListener("input", updateHunts);
-    document.getElementById("huntsOwned").addEventListener("input", updateHunts);
+    // Set default theme and page
+    lichTitle.style.backgroundColor = themes[currentPage];
+    lichTitle.textContent = currentPage;
+
+    // Render the saved rows
+    renderLichSavedRows();
+
+    // Add event listener for switching between Brothers, Sisters, and Cousins
+    lichTitle.onclick = () => {
+        if (currentPage === "Brothers") {
+            currentPage = "Sisters";
+        } else if (currentPage === "Sisters") {
+            currentPage = "Cousins";
+        } else {
+            currentPage = "Brothers";
+        }
+        localStorage.setItem("lichType", currentPage);
+        lichTitle.style.backgroundColor = themes[currentPage];
+        lichTitle.textContent = currentPage;
+        renderLichSavedRows();
+    };
 }
 
-// Function to Render Hunts Rewards
-function renderHuntsRewards(rewards, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
+function renderLichSavedRows() {
+    const savedRowsContainer = document.getElementById("lich-saved-rows");
+    if (!savedRowsContainer) {
+        console.error("Saved rows container not found. Please ensure the 'lich-saved-rows' element exists in the HTML.");
+        return;
+    }
 
-    rewards.forEach((reward, index) => {
-        const rewardDiv = document.createElement("div");
-        rewardDiv.classList.add("reward-item");
+    savedRowsContainer.innerHTML = "";
 
-        const imagePath = `images/bob/${reward.img}`;
-        const moteImagePath = `images/bob/VolatileMotes.png`; // Path to the Volatile Mote image
+    // Ensure mods[currentPage] is properly initialized
+    if (!mods[currentPage]) {
+        mods[currentPage] = [[null, null, null], [null, null, null], [null, null, null], [null, null, null], [null, null, null]];
+    }
 
-        rewardDiv.innerHTML = `
-            <img src="${imagePath}" alt="${reward.name}" class="reward-image"
-            onerror="this.onerror=null;this.src='images/bob/placeholder.png';">
-            <p class="reward-name">${reward.name}</p>
-            ${reward.limit ? `<p class="reward-limit">Limit: ${reward.limit}</p>` : ''}
-            <input type="number" class="reward-quantity" min="0" max="${reward.limit || 0}" value="" style="display:none;">
-            <p class="reward-cost">Cost: ${reward.cost} <img src="${moteImagePath}" alt="Volatile Mote" class="mote-image" style="width: 16px; height: 16px;"></p>
-        `;
+    // Render the active row (Row 0)
+    const activeRowDiv = createRowDiv(0, true);
+    savedRowsContainer.appendChild(activeRowDiv);
 
-        if (reward.limit) {
-            rewardDiv.addEventListener("click", function () {
-                const quantityInput = rewardDiv.querySelector(".reward-quantity");
-                quantityInput.style.display = "block";
-                quantityInput.focus();
-                quantityInput.addEventListener("blur", function () {
-                    if (quantityInput.value === "") {
-                        quantityInput.style.display = "none";
-                    }
-                });
-                quantityInput.addEventListener("input", function () {
-                    if (quantityInput.value !== "") {
-                        const quantity = parseInt(quantityInput.value) || 0;
-                        rewardDiv.querySelector(".reward-limit").textContent = `Limit: ${reward.limit - quantity}`;
-                        updateHunts();
-                    }
-                });
-            });
-        }
+    // Render rows 1–5 stacked under the active row
+    for (let rowIndex = 1; rowIndex <= 5; rowIndex++) {
+        const rowDiv = createRowDiv(rowIndex, false);
+        savedRowsContainer.appendChild(rowDiv);
+    }
+}
 
-        rewardDiv.addEventListener("click", function () {
-            rewardDiv.classList.toggle("selected");
-            updateHunts();
+function createRowDiv(rowIndex, isActiveRow) {
+    const rowDiv = document.createElement("div");
+    rowDiv.classList.add("lich-row");
+
+    if (!mods[currentPage][rowIndex]) {
+        mods[currentPage][rowIndex] = [null, null, null];
+    }
+
+    // Add Reset and Suggest buttons for the active row
+    if (isActiveRow) {
+        const clearButton = document.createElement("button");
+        clearButton.textContent = "CLEAR";
+        clearButton.classList.add("lich-button");
+        clearButton.addEventListener("click", resetLichPage);
+
+        const guessButton = document.createElement("button");
+        guessButton.textContent = "GUESS";
+        guessButton.classList.add("lich-button");
+        guessButton.addEventListener("click", suggestLoadout);
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.flexDirection = "column";
+        buttonContainer.style.alignItems = "center";
+        buttonContainer.style.marginRight = "10px";
+
+        buttonContainer.appendChild(clearButton);
+        buttonContainer.appendChild(document.createElement("div")).style.height = "5px"; // Add gap
+        buttonContainer.appendChild(guessButton);
+        rowDiv.appendChild(buttonContainer);
+    } else {
+        const rowButton = document.createElement("button");
+        rowButton.textContent = rowIndex;
+        rowButton.classList.add("lich-button");
+        rowButton.style.height = "60px"; // Match height with mod boxes
+
+        rowButton.addEventListener("click", () => {
+            mods[currentPage][rowIndex] = [...mods[currentPage][0]]; // Copy active row to this row
+            localStorage.setItem("mod_selections", JSON.stringify(mods)); // Save changes
+            renderLichSavedRows(); // Re-render rows
         });
 
-        container.appendChild(rewardDiv);
-
-        // Limit the number of displayed rewards for community rewards
-        if (containerId === "huntsCommunityRewardsGrid" && index >= 2) {
-            return;
-        }
-    });
-
-    // Ensure community rewards are displayed in a row
-    if (containerId === "huntsCommunityRewardsGrid") {
-        container.style.display = "flex";
-        container.style.flexWrap = "wrap";
+        rowDiv.appendChild(rowButton);
     }
-}
 
-// Change Owned Hunts Count
-function changeHunts(direction) {
-    const owned = document.getElementById("huntsOwned");
-    const inputAmount = parseInt(owned.value) || 1;
-    let newOwned = parseInt(owned.value) + (direction * inputAmount);
+    // Add mod slots for each row
+    mods[currentPage][rowIndex].forEach((mod, colIndex) => {
+        const cell = document.createElement("div");
+        cell.classList.add("mod-box");
 
-    owned.value = Math.max(newOwned, 0);
-    updateHunts();
-}
+        if (isActiveRow) {
+            if (mod) {
+                const modImage = document.createElement("img");
+                modImage.src = `images/mods/${mod}.png`;
+                modImage.draggable = true;
 
-// Update Needed Hunts
-function updateHunts() {
-    let totalMotes = 0;
-    document.querySelectorAll(".selected").forEach(reward => {
-        const cost = parseInt(reward.querySelector(".reward-cost").textContent.replace("Cost: ", "")) || 0;
-        const quantity = parseInt(reward.querySelector(".reward-quantity").value) || 1;
-        totalMotes += cost * quantity;
-    });
-
-    const owned = parseInt(document.getElementById("huntsOwned").value) || 0;
-    const goal = totalMotes - owned;
-
-    document.getElementById("huntsGoal").value = goal;
-}
-
-// Toggle Sections
-function toggleHuntsSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    if (section) {
-        section.classList.toggle('hidden');
-    }
-}
-
-// Event Rewards Table (FULLY COMPLETE)
-const huntsEventRewards = [
-    { name: "Low Guardian Chest Plate", cost: 15, img: "LowGuardianChestPlate.png" },
-    { name: "Belly Of The Beast Sigil", cost: 10, img: "BellyOfTheBeastEmblem.png" },
-    { name: "Krios Signa", cost: 10, img: "KriosSigna.png" },
-    { name: "Prominence Wisp Totem", cost: 30, img: "ProminenceWispTotem.png" },
-    { name: "Fluctus Rahk Skin", cost: 15, img: "FluctusRahkSkin.png" },
-    { name: "Ceti Lacera Blueprint", cost: 15, img: "CetiLacera.png" },
-    { name: "Basmu Blueprint", cost: 15, img: "Basmu.png" },
-    { name: "Stance Forma Blueprint", cost: 15, img: "StanceForma.png" },
-    { name: "The Ballroom Simulacrum", cost: 15, img: "BallroomSimulacrum.png" },
-    { name: "Arcane Tempo", cost: 2, img: "ArcaneTempo.png", limit: 42 },
-    { name: "Arcane Consequence", cost: 2, img: "ArcaneConsequence.png", limit: 42 },
-    { name: "Arcane Momentum", cost: 2, img: "ArcaneMomentum.png", limit: 42 },
-    { name: "Arcane Ice", cost: 2, img: "ArcaneIce.png", limit: 42 },
-    { name: "Arcane Nullifier", cost: 2, img: "ArcaneNullifier.png", limit: 42 },
-    { name: "Arcane Warmth", cost: 2, img: "ArcaneWarmth.png", limit: 42 },
-    { name: "Arcane Resistance", cost: 4, img: "ArcaneResistance.png", limit: 42 },
-    { name: "Arcane Healing", cost: 4, img: "ArcaneHealing.png", limit: 42 },
-    { name: "Arcane Deflection", cost: 4, img: "ArcaneDeflection.png", limit: 42 },
-    { name: "Arcane Victory", cost: 4, img: "ArcaneVictory.png", limit: 42 },
-    { name: "Arcane Strike", cost: 4, img: "ArcaneStrike.png", limit: 42 },
-    { name: "Arcane Awakening", cost: 4, img: "ArcaneAwakening.png", limit: 42 },
-    { name: "Arcane Guardian", cost: 4, img: "ArcaneGuardian.png", limit: 42 },
-    { name: "Arcane Phantasm", cost: 4, img: "ArcanePhantasm.png", limit: 42 },
-    { name: "Arcane Eruption", cost: 4, img: "ArcaneEruption.png", limit: 42 },
-    { name: "Arcane Agility", cost: 4, img: "ArcaneAgility.png", limit: 42 },
-    { name: "Arcane Acceleration", cost: 4, img: "ArcaneAcceleration.png", limit: 42 },
-    { name: "Arcane Trickery", cost: 4, img: "ArcaneTrickery.png", limit: 42 },
-    { name: "Arcane Velocity", cost: 6, img: "ArcaneVelocity.png", limit: 42 },
-    { name: "Arcane Precision", cost: 6, img: "ArcanePrecision.png", limit: 42 },
-    { name: "Arcane Pulse", cost: 6, img: "ArcanePulse.png", limit: 42 },
-    { name: "Arcane Ultimatum", cost: 6, img: "ArcaneUltimatum.png", limit: 42 },
-    { name: "Arcane Aegis", cost: 6, img: "ArcaneAegis.png", limit: 42 },
-    { name: "Arcane Arachne", cost: 6, img: "ArcaneArachne.png", limit: 42 },
-    { name: "Arcane Rage", cost: 6, img: "ArcaneRage.png", limit: 42 },
-    { name: "Arcane Fury", cost: 6, img: "ArcaneFury.png", limit: 42 },
-    { name: "Arcane Avenger", cost: 6, img: "ArcaneAvenger.png", limit: 42 }
-];
-
-// Clan Rewards Table (FULLY COMPLETE)
-const huntsClanRewards = [
-    { name: "Enlightened Hate Skin", cost: 100, img: "EnlightenedHateSkin.png" },
-    { name: "Gilded Clan Sigil", cost: 15, img: "ClanSigilGilded.png" },
-    { name: "Glyphed Clan Sigil", cost: 15, img: "ClanSigilGlyphed.png" },
-    { name: "Phased Clan Sigil", cost: 15, img: "ClanSigilPhased.png" },
-    { name: "Arcane Energize", cost: 30, img: "ArcaneEnergize.png", limit: 42 },
-    { name: "Arcane Grace", cost: 30, img: "ArcaneGrace.png", limit: 42 },
-    { name: "Arcane Barrier", cost: 30, img: "ArcaneBarrier.png", limit: 42 },
-    { name: "Belly Of The Beast Emblem", cost: 45, img: "BellyOfTheBeastEmblem.png" } // Removed limit
-];
-
-// Community Rewards Table
-const huntsCommunityRewards = [
-    { name: "Aspirus Ephemera", cost: 40, img: "AspirusEphemera.png" },
-    { name: "Aspirus Emergent Ephemera", cost: 40, img: "AspirusEmergentEphemera.png" },
-    { name: "Aspirus Apex Ephemera", cost: 40, img: "AspirusApexEphemera.png" }
-];
-
-// Initialize Hunts Rewards
-function fetchHuntsRewards() {
-    renderHuntsRewards(huntsCommunityRewards, "huntsCommunityRewardsGrid");
-    renderHuntsRewards(huntsEventRewards, "huntsEventRewardsGrid");
-    renderHuntsRewards(huntsClanRewards, "huntsClanRewardsGrid");
-}
-
-// Summary Information
-function addHuntsSummaryText() {
-    document.getElementById("huntsSummaryText").innerHTML = `
-        <p>To buy all non-Arcane items at least once, players will need 290 Volatile Motes.</p>
-        <p>To buy all Arcanes available through the event to max rank once, players will need 1,659 Volatile Motes.</p>
-        <p>To buy all Arcanes available to max rank twice, players will need 3,318 Volatile Motes.</p>
-    `;
-}
-
-// Setup the Cousins Tracker
-function setupCousinsTracker() {
-    const cousinsDiv = document.getElementById("cousins-saved-rows");
-
-    cousinsDiv.innerHTML = `
-        <div class="goal-bar" style="justify-content: center; margin-bottom: 20px;">
-            <div class="goal-section">
-                <label for="cousinsGoal">Goal:</label>
-                <input type="number" id="cousinsGoal" value="" min="0" class="number-box" style="text-align:center;">
-            </div>
-            <div class="goal-section" style="margin-left: 20px;">
-                <label for="cousinsOwned">Owned:</label>
-                <div class="change-controls">
-                    <button class="mote-btn jade-btn rounded-btn" onclick="changeCousins(-1)">-</button>
-                    <input type="number" id="cousinsOwned" value="0" min="0" class="number-box" style="text-align:center;">
-                    <button class="mote-btn jade-btn rounded-btn" onclick="changeCousins(1)">+</button>
-                </div>
-            </div>
-        </div>
-        <div id="cousinsSummarySection" class="toggle-section">
-            <h2 class="toggle-title" data-target="cousinsSummaryText">Summary</h2>
-            <div id="cousinsSummaryText" class="summary-box" style="display: none;"></div>
-        </div>
-        <h2 class="toggle-title">Community Rewards</h2>
-        <div id="cousinsCommunityRewardsGrid" class="rewards-grid" style="background: none;"></div>
-        <div id="cousinsEventRewardsGrid" class="rewards-grid"></div>
-        <h2>Clan Rewards</h2>
-        <div id="cousinsClanRewardsGrid" class="rewards-grid"></div>
-    `;
-
-    document.getElementById("cousinsGoal").addEventListener("input", updateCousins);
-    document.getElementById("cousinsOwned").addEventListener("input", updateCousins);
-}
-
-// Function to Render Cousins Rewards
-function renderCousinsRewards(rewards, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
-
-    rewards.forEach((reward, index) => {
-        const rewardDiv = document.createElement("div");
-        rewardDiv.classList.add("reward-item");
-
-        const imagePath = `images/bob/${reward.img}`;
-        const moteImagePath = `images/bob/VolatileMotes.png`; // Path to the Volatile Mote image
-
-        rewardDiv.innerHTML = `
-            <img src="${imagePath}" alt="${reward.name}" class="reward-image"
-            onerror="this.onerror=null;this.src='images/bob/placeholder.png';">
-            <p class="reward-name">${reward.name}</p>
-            ${reward.limit ? `<p class="reward-limit">Limit: ${reward.limit}</p>` : ''}
-            <input type="number" class="reward-quantity" min="0" max="${reward.limit || 0}" value="" style="display:none;">
-            <p class="reward-cost">Cost: ${reward.cost} <img src="${moteImagePath}" alt="Volatile Mote" class="mote-image" style="width: 16px; height: 16px;"></p>
-        `;
-
-        if (reward.limit) {
-            rewardDiv.addEventListener("click", function () {
-                const quantityInput = rewardDiv.querySelector(".reward-quantity");
-                quantityInput.style.display = "block";
-                quantityInput.focus();
-                quantityInput.addEventListener("blur", function () {
-                    if (quantityInput.value === "") {
-                        quantityInput.style.display = "none";
+                modImage.addEventListener("click", () => {
+                    if (mod !== "Oull") {
+                        mods[currentPage][0][colIndex] = cycleModVariant(mod);
+                        localStorage.setItem("mod_selections", JSON.stringify(mods));
+                        renderLichSavedRows();
                     }
                 });
-                quantityInput.addEventListener("input", function () {
-                    if (quantityInput.value !== "") {
-                        const quantity = parseInt(quantityInput.value) || 0;
-                        rewardDiv.querySelector(".reward-limit").textContent = `Limit: ${reward.limit - quantity}`;
-                        updateCousins();
+
+                modImage.addEventListener("dragstart", (event) => {
+                    event.dataTransfer.setData("text/plain", JSON.stringify({ colIndex }));
+                });
+
+                modImage.addEventListener("dragend", (event) => {
+                    const isDropTargetValid = event.dataTransfer.dropEffect !== "none";
+                    if (!isDropTargetValid) {
+                        mods[currentPage][0][colIndex] = null; // Reset to dropdown
+                        localStorage.setItem("mod_selections", JSON.stringify(mods));
+                        renderLichSavedRows();
                     }
                 });
-            });
+
+                modImage.addEventListener("dragover", (event) => {
+                    event.preventDefault();
+                });
+
+                modImage.addEventListener("drop", (event) => {
+                    event.preventDefault();
+                    const dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+                    const draggedIndex = dragData.colIndex;
+
+                    // Swap mods within the active row
+                    const tempMod = mods[currentPage][0][draggedIndex];
+                    mods[currentPage][0][draggedIndex] = mods[currentPage][0][colIndex];
+                    mods[currentPage][0][colIndex] = tempMod;
+
+                    localStorage.setItem("mod_selections", JSON.stringify(mods));
+                    renderLichSavedRows();
+                });
+
+                cell.appendChild(modImage);
+            } else {
+                const dropdown = document.createElement("select");
+                dropdown.classList.add("mod-dropdown");
+
+                updateDropdownOptions(dropdown, colIndex);
+
+                dropdown.addEventListener("change", (event) => {
+                    const selectedMod = event.target.value;
+                    if (selectedMod !== "Select Mod") {
+                        mods[currentPage][0][colIndex] = selectedMod;
+                        localStorage.setItem("mod_selections", JSON.stringify(mods));
+                        renderLichSavedRows();
+                    }
+                });
+
+                cell.appendChild(dropdown);
+            }
+        } else {
+            if (mod) {
+                const modImage = document.createElement("img");
+                modImage.src = `images/mods/${mod}.png`;
+                cell.appendChild(modImage);
+            } else {
+                const blankBox = document.createElement("div");
+                blankBox.classList.add("mod-box");
+                cell.appendChild(blankBox);
+            }
         }
 
-        rewardDiv.addEventListener("click", function () {
-            rewardDiv.classList.toggle("selected");
-            updateCousins();
+        rowDiv.appendChild(cell);
+    });
+
+    return rowDiv;
+}
+
+function updateDropdownOptions(dropdown, excludeIndex) {
+    const usedMods = mods[currentPage][0]
+        .filter((mod, index) => mod && index !== excludeIndex)
+        .flatMap((mod) => {
+            const baseMod = mod.replace(/F|P$/, ""); // Normalize to base mod
+            return [baseMod, `${baseMod}F`, `${baseMod}P`]; // Include all variants
         });
 
-        container.appendChild(rewardDiv);
-
-        // Limit the number of displayed rewards for community rewards
-        if (containerId === "cousinsCommunityRewardsGrid" && index >= 2) {
-            return;
-        }
-    });
-
-    // Ensure community rewards are displayed in a row
-    if (containerId === "cousinsCommunityRewardsGrid") {
-        container.style.display = "flex";
-        container.style.flexWrap = "wrap";
+    // Explicit "Fass" Fix: Ensure "Fass" and its variants are properly handled
+    if (mods[currentPage][0].some((mod) => mod && mod.includes("Fass"))) {
+        if (!usedMods.includes("Fass")) usedMods.push("Fass");
+        if (!usedMods.includes("FassF")) usedMods.push("FassF");
+        if (!usedMods.includes("FassP")) usedMods.push("FassP");
+        console.log("Fass variants explicitly added to usedMods:", usedMods);
     }
-}
 
-// Change Owned Cousins Count
-function changeCousins(direction) {
-    const owned = document.getElementById("cousinsOwned");
-    const inputAmount = parseInt(owned.value) || 1;
-    let newOwned = parseInt(owned.value) + (direction * inputAmount);
+    const allMods = ["Fass", "Jahu", "Khra", "Lohk", "Netra", "Ris", "Vome", "Xata", "Oull"];
+    const availableMods = allMods.filter((mod) => !usedMods.includes(mod));
 
-    owned.value = Math.max(newOwned, 0);
-    updateCousins();
-}
+    dropdown.innerHTML = ""; // Clear options
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "Select Mod";
+    defaultOption.textContent = "Select Mod";
+    dropdown.appendChild(defaultOption);
 
-// Update Needed Cousins
-function updateCousins() {
-    let totalMotes = 0;
-    document.querySelectorAll(".selected").forEach(reward => {
-        const cost = parseInt(reward.querySelector(".reward-cost").textContent.replace("Cost: ", "")) || 0;
-        const quantity = parseInt(reward.querySelector(".reward-quantity").value) || 1;
-        totalMotes += cost * quantity;
+    availableMods.forEach((modOption) => {
+        const option = document.createElement("option");
+        option.value = modOption;
+        option.textContent = modOption;
+        dropdown.appendChild(option);
     });
-
-    const owned = parseInt(document.getElementById("cousinsOwned").value) || 0;
-    const goal = totalMotes - owned;
-
-    document.getElementById("cousinsGoal").value = goal;
 }
 
-// Toggle Sections
-function toggleCousinsSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    if (section) {
-        section.classList.toggle('hidden');
+function cycleModVariant(mod) {
+    if (mod === "Oull") return mod;
+    if (mod.endsWith("F")) return mod.slice(0, -1) + "P";
+    if (mod.endsWith("P")) return mod.slice(0, -1);
+    return mod + "F";
+}
+
+function resetLichPage() {
+    mods[currentPage] = [[null, null, null], [null, null, null], [null, null, null], [null, null, null], [null, null, null]];
+    localStorage.setItem("mod_selections", JSON.stringify(mods));
+    renderLichSavedRows();
+}
+
+function suggestLoadout() {
+    const activeMods = mods[currentPage][0];
+
+    // Check how many mods are filled
+    const filledMods = activeMods.filter(Boolean);
+
+    if (filledMods.length < 2) {
+        alert("Please set at least 2 active mods before using the GUESS button.");
+        return;
     }
+
+    // Automatically add "Oull" to the third slot if only two mods are filled
+    if (filledMods.length === 2) {
+        activeMods[2] = "Oull";
+        localStorage.setItem("mod_selections", JSON.stringify(mods)); // Save the updated mods
+        renderLichSavedRows(); // Re-render rows to reflect the change
+    }
+
+    // Generate loadouts dynamically
+    const suggestions = [];
+    if (filledMods.length === 3 || activeMods.filter(Boolean).length === 3) {
+        // If all 3 mods are filled, use them directly for suggestions
+        suggestions.push([activeMods[0], activeMods[1], activeMods[2]]);
+        suggestions.push([activeMods[2], activeMods[0], activeMods[1]]);
+        suggestions.push([activeMods[1], activeMods[2], activeMods[0]]);
+        suggestions.push([activeMods[2], activeMods[1], activeMods[0]]);
+    }
+
+    // Assign the suggestions to rows 1-4
+    mods[currentPage][1] = suggestions[0];
+    mods[currentPage][2] = suggestions[1];
+    mods[currentPage][3] = suggestions[2];
+    mods[currentPage][4] = suggestions[3];
+
+    localStorage.setItem("mod_selections", JSON.stringify(mods));
+    renderLichSavedRows();
 }
 
-// Event Rewards Table (FULLY COMPLETE)
-const cousinsEventRewards = [
-    { name: "Low Guardian Chest Plate", cost: 15, img: "LowGuardianChestPlate.png" },
-    { name: "Belly Of The Beast Sigil", cost: 10, img: "BellyOfTheBeastEmblem.png" },
-    { name: "Krios Signa", cost: 10, img: "KriosSigna.png" },
-    { name: "Prominence Wisp Totem", cost: 30, img: "ProminenceWispTotem.png" },
-    { name: "Fluctus Rahk Skin", cost: 15, img: "FluctusRahkSkin.png" },
-    { name: "Ceti Lacera Blueprint", cost: 15, img: "CetiLacera.png" },
-    { name: "Basmu Blueprint", cost: 15, img: "Basmu.png" },
-    { name: "Stance Forma Blueprint", cost: 15, img: "StanceForma.png" },
-    { name: "The Ballroom Simulacrum", cost: 15, img: "BallroomSimulacrum.png" },
-    { name: "Arcane Tempo", cost: 2, img: "ArcaneTempo.png", limit: 42 },
-    { name: "Arcane Consequence", cost: 2, img: "ArcaneConsequence.png", limit: 42 },
-    { name: "Arcane Momentum", cost: 2, img: "ArcaneMomentum.png", limit: 42 },
-    { name: "Arcane Ice", cost: 2, img: "ArcaneIce.png", limit: 42 },
-    { name: "Arcane Nullifier", cost: 2, img: "ArcaneNullifier.png", limit: 42 },
-    { name: "Arcane Warmth", cost: 2, img: "ArcaneWarmth.png", limit: 42 },
-    { name: "Arcane Resistance", cost: 4, img: "ArcaneResistance.png", limit: 42 },
-    { name: "Arcane Healing", cost: 4, img: "ArcaneHealing.png", limit: 42 },
-    { name: "Arcane Deflection", cost: 4, img: "ArcaneDeflection.png", limit: 42 },
-    { name: "Arcane Victory", cost: 4, img: "ArcaneVictory.png", limit: 42 },
-    { name: "Arcane Strike", cost: 4, img: "ArcaneStrike.png", limit: 42 },
-    { name: "Arcane Awakening", cost: 4, img: "ArcaneAwakening.png", limit: 42 },
-    { name: "Arcane Guardian", cost: 4, img: "ArcaneGuardian.png", limit: 42 },
-    { name: "Arcane Phantasm", cost: 4, img: "ArcanePhantasm.png", limit: 42 },
-    { name: "Arcane Eruption", cost: 4, img: "ArcaneEruption.png", limit: 42 },
-    { name: "Arcane Agility", cost: 4, img: "ArcaneAgility.png", limit: 42 },
-    { name: "Arcane Acceleration", cost: 4, img: "ArcaneAcceleration.png", limit: 42 },
-    { name: "Arcane Trickery", cost: 4, img: "ArcaneTrickery.png", limit: 42 },
-    { name: "Arcane Velocity", cost: 6, img: "ArcaneVelocity.png", limit: 42 },
-    { name: "Arcane Precision", cost: 6, img: "ArcanePrecision.png", limit: 42 },
-    { name: "Arcane Pulse", cost: 6, img: "ArcanePulse.png", limit: 42 },
-    { name: "Arcane Ultimatum", cost: 6, img: "ArcaneUltimatum.png", limit: 42 },
-    { name: "Arcane Aegis", cost: 6, img: "ArcaneAegis.png", limit: 42 },
-    { name: "Arcane Arachne", cost: 6, img: "ArcaneArachne.png", limit: 42 },
-    { name: "Arcane Rage", cost: 6, img: "ArcaneRage.png", limit: 42 },
-    { name: "Arcane Fury", cost: 6, img: "ArcaneFury.png", limit: 42 },
-    { name: "Arcane Avenger", cost: 6, img: "ArcaneAvenger.png", limit: 42 }
-];
-
-// Clan Rewards Table (FULLY COMPLETE)
-const cousinsClanRewards = [
-    { name: "Enlightened Hate Skin", cost: 100, img: "EnlightenedHateSkin.png" },
-    { name: "Gilded Clan Sigil", cost: 15, img: "ClanSigilGilded.png" },
-    { name: "Glyphed Clan Sigil", cost: 15, img: "ClanSigilGlyphed.png" },
-    { name: "Phased Clan Sigil", cost: 15, img: "ClanSigilPhased.png" },
-    { name: "Arcane Energize", cost: 30, img: "ArcaneEnergize.png", limit: 42 },
-    { name: "Arcane Grace", cost: 30, img: "ArcaneGrace.png", limit: 42 },
-    { name: "Arcane Barrier", cost: 30, img: "ArcaneBarrier.png", limit: 42 },
-    { name: "Belly Of The Beast Emblem", cost: 45, img: "BellyOfTheBeastEmblem.png" } // Removed limit
-];
-
-// Community Rewards Table
-const cousinsCommunityRewards = [
-    { name: "Aspirus Ephemera", cost: 40, img: "AspirusEphemera.png" },
-    { name: "Aspirus Emergent Ephemera", cost: 40, img: "AspirusEmergentEphemera.png" },
-    { name: "Aspirus Apex Ephemera", cost: 40, img: "AspirusApexEphemera.png" }
-];
-
-// Initialize Cousins Rewards
-function fetchCousinsRewards() {
-    renderCousinsRewards(cousinsCommunityRewards, "cousinsCommunityRewardsGrid");
-    renderCousinsRewards(cousinsEventRewards, "cousinsEventRewardsGrid");
-    renderCousinsRewards(cousinsClanRewards, "cousinsClanRewardsGrid");
+// Fetch with no CORS
+function fetchWithNoCors(url) {
+    fetch(url, { mode: 'no-cors' })
+        .then(response => response.text())
+        .then(data => {
+            console.log(data);
+            // Handle data
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
 }
 
-// Summary Information
-function addCousinsSummaryText() {
-    document.getElementById("cousinsSummaryText").innerHTML = `
-        <p>To buy all non-Arcane items at least once, players will need 290 Volatile Motes.</p>
-        <p>To buy all Arcanes available through the event to max rank once, players will need 1,659 Volatile Motes.</p>
-    `;
-}
+// Expose initLichHunts globally
+window.initLichHunts = initLichHunts;
+
+document.addEventListener("DOMContentLoaded", initLichHunts);
