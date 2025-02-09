@@ -10,6 +10,78 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/css/luckysheet.css">
     <script src="https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/js/plugin.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckysheet/dist/luckysheet.umd.js"></script>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow-y: auto;
+        }
+        .container {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .tab {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .progress-bar {
+            height: 20px;
+            border-radius: 10px;
+            background-color: #4caf50;
+            width: 0;
+            transition: width 0.5s;
+        }
+        .progress-bar-background {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 20px;
+            justify-items: center;
+            align-items: center;
+        }
+        .challenge {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 300px;
+            position: relative;
+        }
+        .challenge .complete-checkbox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .challenge .task-span {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            min-width: 50px;
+        }
+        .challenge .amount-span {
+            display: block;
+            margin-bottom: 10px;
+            min-width: 50px;
+        }
+        .challenge .worth-span {
+            display: block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body onload="initApp()">
 
@@ -27,7 +99,48 @@
     <!-- Centered Content -->
     <div class="container">
         <div id="content">
-            <div id="nightwave" class="tab"></div>
+            <div id="nightwave" class="tab">
+                <div class="progress-container">
+                    <span id="rank-display">Rank: 0</span>
+                    <div class="progress-bar-background">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="challenges-container" class="challenges-grid">
+                    <div class="challenge">
+                        <input type="text" value="Challenge 1">
+                        <input type="checkbox">
+                    </div>
+                    <div class="challenge">
+                        <input type="text" value="Challenge 2">
+                        <input type="checkbox">
+                    </div>
+                    <div class="challenge">
+                        <input type="text" value="Challenge 3">
+                        <input type="checkbox">
+                    </div>
+                    <div class="challenge">
+                        <input type="text" value="Challenge 4">
+                        <input type="checkbox">
+                    </div>
+                    <div class="challenge">
+                        <input type="text" value="Challenge 5">
+                        <input type="checkbox">
+                    </div>
+                    <div class="challenge">
+                        <input type="text" value="Challenge 6">
+                        <input type="checkbox">
+                    </div>
+                    <div class="challenge">
+                        <input type="text" value="Challenge 7">
+                        <input type="checkbox">
+                    </div>
+                    <div class="challenge">
+                        <input type="text" value="Challenge 8">
+                        <input type="checkbox">
+                    </div>
+                </div>
+            </div>
             <div id="hunts" class="tab">
                 <h2 id="lich-title" class="lich-title">Brothers</h2>
                 <div id="lich-saved-rows" class="lich-saved-rows"></div>
