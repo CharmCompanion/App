@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Chart</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="images/x-icon" href="favicon.ico">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <img id="home-icon" src="icon.png" alt="Home">
+        <ul>
+            <li class="tab" data-target="map-container">Map</li>
+            <li class="tab" data-target="hunts">Hunts</li>
+            <li class="tab" data-target="bob">Bob</li>
+            <li class="tab" data-target="nightwave">Nightwave</li>
+            <li class="tab" data-target="notes">Notes</li>
+            <li class="tab" data-target="sheets">Sheets</li>
+            <li class="tab" data-target="settings">Settings</li>
+        </ul>
+    </nav>
+
+    <!-- Main Pages -->
+    <div id="map-container" class="page active">
+        <svg id="starchart"></svg>
+        <div id="info-panel">
+            <button id="toggle-panel">❮</button>
+            <div id="panel-content">
+                <h2>Mission Info</h2>
+                <p id="mission-details">Click a mission node to see details.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="bob" class="page">
+        <div id="belly-tracker"></div>
+    </div>
+    
+    <div id="notes" class="page">
+        <textarea id="note-content"></textarea>
+    </div>
+    
+    <div id="sheets" class="page">
+        <div id="spreadsheet-container"></div>
+    </div>
+    
+    <div id="hunts" class="page"></div>
+    <div id="bob" class="page"></div>
+    <div id="nightwave" class="page"></div>
+    <div id="notes" class="page"></div>
+    <div id="sheets" class="page"></div>
+    <div id="settings" class="page"></div>
+
+    <script src="js/app.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/hunts.js"></script>
+    <script src="js/bob.js"></script>
+    <script src="js/nightwave.js"></script>
+    <script src="js/notes.js"></script>
+    <script src="js/sheets.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>
