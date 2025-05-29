@@ -1,0 +1,80 @@
+ For Resource Tracking
+src/components/resource/ResourceAlertSettings.tsx
+
+ For Path Planner (not started yet)
+src/pages/PathPlanner.tsx
+
+src/components/path/PathCard.tsx
+
+src/components/path/PathChecklist.tsx
+
+src/firebase/paths.ts
+
+ For Goal Tracking
+src/pages/Goals.tsx
+
+src/components/goals/GoalTracker.tsx
+
+src/firebase/goals.ts
+
+🔹 For LFG + Blessing Trains
+src/pages/LFG.tsx
+
+src/components/lfg/LFGBoard.tsx
+
+src/firebase/lfg.ts
+
+🔹 For Event Trackers
+src/pages/Events.tsx
+
+src/components/events/ThermiaTracker.tsx
+
+src/firebase/events.ts
+
+🔹 For Notes
+src/pages/Notes.tsx
+
+src/components/notes/NotesEditor.tsx
+
+src/firebase/notes.ts
+
+🔹 For Clan Tools
+src/pages/ClanHub.tsx
+
+src/components/clans/ClanMOTD.tsx
+
+src/firebase/clans.ts
+
+🔹 For Guides
+src/pages/Guides.tsx
+
+src/components/guides/GuideEditor.tsx
+
+src/firebase/guides.ts
+
+🔹 For Calendar & Alerts
+src/pages/Calendar.tsx
+
+src/components/calendar/CalendarDisplay.tsx
+
+src/firebase/calendar.ts
+
+🔹 For Codex/Scanner
+src/pages/Codex.tsx
+
+src/components/codex/CodexScanner.tsx
+
+🔹 For Mastery
+src/pages/Mastery.tsx
+
+src/components/mastery/MasteryTracker.tsx
+
+🔹 For Top UI (if not already used)
+src/components/TopBar/TopBar.tsx
+
+src/components/TopBar/TopBar.css
+
+🔹 Theme & Styling
+src/styles/themes.css (for Corpus/Grineer/Tenno UI)
+
+src/styles/shared.css (shared UI elements)

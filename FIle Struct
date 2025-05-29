@@ -1,0 +1,88 @@
+// Root Project Folder: charm-companion
+
+charm-companion/
+├── public/
+│   └── assets/
+│       └── mods/                  # Requiem mod images
+│       └── qrcodes/              # QR exports (optional)
+│       └── fashion/              # User screenshots (optional)
+├── src/
+│   ├── assets/
+│   │   └── icons/                # Faction icons, resources, loadout symbols
+│   ├── components/
+│   │   ├── calendar/             # Full calendar UI system
+│   │   ├── clans/                # Clan creation/joining tools
+│   │   ├── events/               # Thermia, Ghoul Purge, etc trackers
+│   │   ├── goals/                # Goal setting and tracking tools
+│   │   ├── guides/               # Guides reader/editor
+│   │   ├── home/                 # Homepage tiles and alert boxes
+│   │   ├── import/               # ScannerJsonUpload.tsx
+│   │   ├── lfg/                  # Blessing trains, group finder
+│   │   ├── lichtracker/          # Mod table, logic, suggestion system
+│   │   ├── loadouts/
+│   │   │   ├── LoadoutEditor.tsx
+│   │   │   ├── LoadoutApplyButton.tsx
+│   │   ├── mastery/              # MR progress and item lists
+│   │   ├── notes/                # Spreadsheet or rich notes
+│   │   ├── path/                 # Path Planner task cards and progress UI
+│   │   ├── qrcode/
+│   │   │   ├── QRCodeGenerator.tsx
+│   │   │   ├── QRCodeImport.tsx
+│   │   │   ├── QRCodeLoadoutPreview.tsx
+│   │   ├── resource/
+│   │   │   ├── ResourceTracker.tsx
+│   │   │   ├── ResourceAlertSettings.tsx
+│   │   ├── settings/             # Global setting panels
+│   │   ├── starchart/            # Interactive map interface
+│   │   └── tools/                # Shared tool components
+│   ├── data/
+│   │   └── resources.ts          # Resource name map
+│   ├── firebase/
+│   │   ├── config.ts
+│   │   ├── resource.ts
+│   │   ├── loadouts.ts
+│   │   ├── inventory.ts
+│   │   ├── lich.ts               # Requiem logic and storage
+│   │   ├── events.ts             # Event timers
+│   │   ├── goals.ts              # Goal storage
+│   │   ├── paths.ts              # Player paths and completion
+│   │   ├── calendar.ts
+│   │   ├── notes.ts
+│   │   ├── clans.ts
+│   │   ├── guides.ts
+│   │   ├── lfg.ts
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useAlertContext.ts
+│   │   └── useScannerData.ts
+│   ├── pages/
+│   │   ├── Home.tsx
+│   │   ├── Loadouts.tsx
+│   │   ├── LFG.tsx
+│   │   ├── Goals.tsx
+│   │   ├── Events.tsx
+│   │   ├── Notes.tsx
+│   │   ├── Calendar.tsx
+│   │   ├── PathPlanner.tsx
+│   │   ├── Mastery.tsx
+│   │   ├── Scanner.tsx
+│   │   ├── ClanHub.tsx
+│   │   ├── Codex.tsx
+│   │   ├── Guides.tsx
+│   │   └── Tools/
+│   │       └── ImportExport.tsx
+│   ├── routes/
+│   │   └── AppRoutes.tsx
+│   ├── styles/
+│   │   └── themes.css            # Theme by faction
+│   ├── utils/
+│   │   ├── handleJsonImport.ts
+│   │   ├── parseScannerJson.ts
+│   │   ├── thresholdUtils.ts
+│   │   ├── buildValidator.ts
+│   │   └── qrCompressor.ts       # Base64 or zlib encode/decode
+│   └── index.tsx
+├── tailwind.config.js
+├── vite.config.ts
+├── package.json
+└── README.md

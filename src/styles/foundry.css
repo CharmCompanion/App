@@ -1,0 +1,71 @@
+.foundry-container {
+  @apply min-h-screen bg-gray-900 text-white;
+}
+
+.foundry-header {
+  @apply bg-gray-800 border-b border-gray-700 p-4;
+}
+
+.foundry-content {
+  @apply p-4;
+}
+
+.stats-grid {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-4;
+}
+
+.stat-card {
+  @apply bg-gray-800 p-4 rounded-lg;
+}
+
+.item-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+}
+
+.item-card {
+  @apply bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-all shadow-lg relative;
+}
+
+.search-bar {
+  @apply flex items-center gap-2 mb-4 bg-gray-800 rounded-lg p-2;
+}
+
+.filter-section {
+  @apply bg-gray-800 rounded-lg p-4 mb-4;
+}
+
+.inventory-counter {
+  @apply flex items-center gap-1;
+}
+
+.inventory-input {
+  @apply w-12 bg-transparent text-white text-xs text-center outline-none;
+}
+
+.button-group {
+  @apply flex items-center gap-2;
+}
+
+.icon-button {
+  @apply p-1 rounded hover:bg-gray-700;
+}
+
+.progress-bar {
+  @apply w-full h-2 bg-gray-700 rounded overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full bg-blue-500 transition-all;
+}
+
+.fallback-text {
+  @apply text-gray-400 text-xs font-bold;
+}
+
+.inventory-counter button {
+  @apply inline-flex items-center;
+}
+
+.button-group button {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500;
+}

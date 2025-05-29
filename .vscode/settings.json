@@ -1,0 +1,8 @@
+{
+  // Turn off the built-in CSS rule that complains about @tailwind/@apply
+  "css.lint.unknownAtRules": "ignore",
+
+  // Do the same for SCSS / Less (in case you use them)
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore"
+}

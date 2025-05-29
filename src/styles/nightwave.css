@@ -1,0 +1,196 @@
+/* Nightwave Container */
+.nw-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  color: white;
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header */
+.nw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.nw-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.nw-controls select,
+.nw-controls .btn-refresh {
+  padding: 0.5rem;
+  border: 1px solid #444;
+  background: #222;
+  color: white;
+  border-radius: 4px;
+}
+
+/* XP Progress */
+.xp-bar {
+  margin: 1rem 0;
+}
+
+.bar-bg {
+  background: #222;
+  border-radius: 6px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #00ffff, #007a7a);
+  transition: width 0.4s ease;
+}
+
+/* Tab Buttons */
+.tabs {
+  display: flex;
+  margin: 1rem 0;
+  border-bottom: 1px solid #444;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  color: #888;
+  border-bottom: 2px solid transparent;
+}
+
+.tabs button.active {
+  color: #9efaff;
+  border-color: #9efaff;
+}
+
+/* Reward Tracks */
+.reward-bar,
+.rank-reward-bar,
+.prestige-bar {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+}
+
+.reward {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  width: 60px;
+  height: 90px;
+  border: 1px solid #444;
+  background-color: #111;
+  border-radius: 6px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.5rem 0.25rem;
+}
+
+.reward img {
+  width: 100%;
+  height: auto;
+}
+
+.reward.unlocked {
+  border-color: #9efaff;
+  background: #1a3333;
+}
+
+.tier-num {
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+/* Acts Grid */
+.acts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.act {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.act:hover {
+  transform: scale(1.02);
+}
+
+.act.completed {
+  opacity: 0.6;
+}
+
+.act-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.act-info {
+  flex: 1;
+}
+
+.act-info strong {
+  display: block;
+  color: #9efaff;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.act-info span {
+  color: #bbb;
+  font-size: 0.875rem;
+}
+
+.act-meta {
+  text-align: right;
+  font-size: 0.75rem;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.pill.daily {
+  background: #3b82f6;
+  color: white;
+}
+
+.pill.weekly {
+  background: #f59e0b;
+  color: white;
+}
+
+.time {
+  display: block;
+  color: #999;
+  margin-top: 0.25rem;
+}
+
+.xp {
+  font-weight: bold;
+  display: block;
+  color: #9efaff;
+}

@@ -1,0 +1,32 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1c1c1c;
+  color: white;
+  padding: 1rem;
+}
+.topbar nav a {
+  margin-left: 1rem;
+  color: #ccc;
+  text-decoration: none;
+}
+.topbar nav a:hover {
+  color: white;
+}
+
+// FILE: src/styles/themes.css
+:root {
+  --color-primary-corpus: #00bfff;
+  --color-primary-grineer: #b22222;
+  --color-primary-tenno: #ffffff;
+}
+[data-theme='corpus'] {
+  --color-primary: var(--color-primary-corpus);
+}
+[data-theme='grineer'] {
+  --color-primary: var(--color-primary-grineer);
+}
+[data-theme='tenno'] {
+  --color-primary: var(--color-primary-tenno);
+}
